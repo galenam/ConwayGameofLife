@@ -17,3 +17,17 @@
 {
     background-color: black;
 }
+
+.header div
+{
+padding-bottom: 15px;
+}
+
+.header div button
+{
+    background-color: black;
+    color: white;
+    border-color: black;
+    font-size: 1.2em;
+    padding: 5px;
+}
