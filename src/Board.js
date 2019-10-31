@@ -1,7 +1,7 @@
 import React from 'react';
 import Square from './square';
 import './Board.css';
-import { setDeathAlive } from './setDeathAlive';
+import { code } from './setDeathAlive';
 
 class Board extends React.Component {
     constructor(props) {
@@ -49,7 +49,7 @@ class Board extends React.Component {
     startGame() {
         let squaresAll = this.state.squaresAll.slice();
         let squaresAlive = new Map(this.state.squaresAlive);
-        let difference = setDeathAlive(squaresAlive, this.state.countInLine, squaresAll.length);
+        let difference = code.setDeathAlive(squaresAlive, this.state.countInLine, squaresAll.length);
         let squaresAllNew = this.getSquaresAllFromDifference(difference, squaresAll);
         let squaresAliveNew = this.getSquaresAlliveFromDifference(difference, squaresAlive);
         this.setState({
