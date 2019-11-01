@@ -1,7 +1,7 @@
 import React from 'react';
 import Square from './square';
 import './Board.css';
-import { code } from './setDeathAlive';
+import setDeathAlive from './setDeathAlive';
 
 class Board extends React.Component {
     constructor(props) {
@@ -13,7 +13,6 @@ class Board extends React.Component {
             countInLine: 20,
         };
     }
-
 
     renderSquare(i) {
         return <Square key={i} alive={this.state.squaresAll[i]} onClick={() => this.changeColor(i)}></Square>
@@ -49,7 +48,7 @@ class Board extends React.Component {
     startGame() {
         let squaresAll = this.state.squaresAll.slice();
         let squaresAlive = new Map(this.state.squaresAlive);
-        let difference = code.setDeathAlive(squaresAlive, this.state.countInLine, squaresAll.length);
+        let difference = setDeathAlive.setDeathAlive(squaresAlive, this.state.countInLine, squaresAll.length);
         let squaresAllNew = this.getSquaresAllFromDifference(difference, squaresAll);
         let squaresAliveNew = this.getSquaresAlliveFromDifference(difference, squaresAlive);
         this.setState({

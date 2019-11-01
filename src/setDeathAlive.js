@@ -2,14 +2,14 @@ function setDeathAlive(squaresAlive, countInLine, countOfAllSquares) {
     let squares = new Map(squaresAlive);
     // todo : сказать, будут ли клетки живыми
     // todo : сказать, будут ли мертвые оживать
-    for (let valueR of squares.keys()) {
-        let neighbours = getNeighbours(valueR, countInLine, countOfAllSquares);
+    for (let value of squares.keys()) {
+        let neighbours = getNeighbours(value, countInLine, countOfAllSquares);
         console.log(neighbours);
 
     }
     return squares;
 }
-// todo : тесты
+
 function getNeighbours(value, countInLine, maxValue) {
     var neighbours = [];
     //0
