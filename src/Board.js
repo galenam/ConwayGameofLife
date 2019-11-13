@@ -24,7 +24,7 @@ class Board extends React.Component {
         let squaresAlive = new Map(this.state.squaresAlive);
         let foundAliveSquare = squaresAlive.get(i);
         if (squares[i] && foundAliveSquare === undefined) {
-            squaresAlive.set(i, true);
+            squaresAlive.set(i, i);
         }
         else if (!squares[i] && foundAliveSquare) {
             squaresAlive.delete(i);
@@ -37,7 +37,11 @@ class Board extends React.Component {
 
     // todo : реализовать функцию
     getSquaresAllFromDifference(difference, squaresAll) {
-        return squaresAll.slice();
+        var newSquaresAll = (new Array(400)).fill(false);
+        for (let value of difference.keys()) {
+            newSquaresAll[value] = true;
+        }
+        return newSquaresAll;
     }
 
     // todo : реализовать функцию
@@ -48,9 +52,10 @@ class Board extends React.Component {
     startGame() {
         let squaresAll = this.state.squaresAll.slice();
         let squaresAlive = new Map(this.state.squaresAlive);
-        let difference = setDeathAlive.setDeathAlive(squaresAlive, this.state.countInLine, squaresAll.length);
+        let difference = setDeathAlive(squaresAlive, this.state.countInLine, squaresAll.length);
         let squaresAllNew = this.getSquaresAllFromDifference(difference, squaresAll);
-        let squaresAliveNew = this.getSquaresAlliveFromDifference(difference, squaresAlive);
+        // todo : таймер
+        let squaresAliveNew = difference;//this.getSquaresAlliveFromDifference(difference, squaresAlive);
         this.setState({
             squaresAll: squaresAllNew,
             squaresAlive: squaresAliveNew,

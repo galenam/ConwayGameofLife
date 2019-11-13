@@ -1,56 +1,68 @@
-const code = require('./setDeathAlive');
+const setDeathAlive = require('./setDeathAlive');
+const extentions = require('./testExtensions');
 
-test('data from normal cell', () => {
-    let data = code.getNeighbours(25, 20, 400);
-    let correctData = [24, 26, 4, 5, 6, 44, 45, 46];
-    expect(data).toEqual(expect.arrayContaining(correctData));
+const countInLine = 20;
+const countOfAllSquares = 400;
+
+// todo : составить список тестов для ситуация клетка жива - умерла
+test('3 triangle', () => {
+    let initialAliveSquares = extentions.createCorrectDataStructure([0, 21, 40]);
+    let alive1Generation = setDeathAlive(initialAliveSquares, countInLine, countOfAllSquares);
+    let correctData = extentions.createCorrectDataStructure([20, 21]);
+    expect(extentions.compareData(correctData, alive1Generation)).toEqual(true);
+});
+test('3 line', () => {
+    let initialAliveSquares = extentions.createCorrectDataStructure([1, 21, 41]);
+    let alive1Generation = setDeathAlive(initialAliveSquares, countInLine, countOfAllSquares);
+    let correctData = extentions.createCorrectDataStructure([20, 21, 22]);
+    expect(extentions.compareData(correctData, alive1Generation)).toEqual(true);
 });
 
-test('data from left border', () => {
-    let data = code.getNeighbours(20, 20, 400);
-    let correctData = [0, 1, 21, 40, 41, 39, 19, 59];
-    expect(data).toEqual(expect.arrayContaining(correctData));
+test('3 far from each other', () => {
+    let initialAliveSquares = extentions.createCorrectDataStructure([0, 29, 40]);
+    let alive1Generation = setDeathAlive(initialAliveSquares, countInLine, countOfAllSquares);
+    let correctData = extentions.createCorrectDataStructure([]);
+    expect(extentions.compareData(correctData, alive1Generation)).toEqual(true);
 });
 
-test('data from top border', () => {
-    let data = code.getNeighbours(2, 20, 400);
-    let correctData = [1, 3, 21, 22, 23, 381, 382, 383];
-    expect(data).toEqual(expect.arrayContaining(correctData));
+test('4 block', () => {
+    let initialAliveSquares = extentions.createCorrectDataStructure([21, 22, 41, 42]);
+    let alive1Generation = setDeathAlive(initialAliveSquares, countInLine, countOfAllSquares);
+    let correctData = extentions.createCorrectDataStructure([21, 22, 41, 42]);
+    expect(extentions.compareData(correctData, alive1Generation)).toEqual(true);
 });
 
-test('data from right border', () => {
-    let data = code.getNeighbours(39, 20, 400);
-    let correctData = [18, 19, 38, 58, 59, 0, 20, 40];
-    expect(data).toEqual(expect.arrayContaining(correctData));
+test('6 hive', () => {
+    let initialAliveSquares = extentions.createCorrectDataStructure([22, 23, 41, 44, 62, 63]);
+    let alive1Generation = setDeathAlive(initialAliveSquares, countInLine, countOfAllSquares);
+    let correctData = extentions.createCorrectDataStructure([22, 23, 41, 44, 62, 63]);
+    expect(extentions.compareData(correctData, alive1Generation)).toEqual(true);
 });
 
-test('data from bottom border', () => {
-    let data = code.getNeighbours(382, 20, 400);
-    let correctData = [381, 383, 361, 362, 363, 1, 2, 3];
-    expect(data).toEqual(expect.arrayContaining(correctData));
+test('7 loaf', () => {
+    let initialAliveSquares = extentions.createCorrectDataStructure([23, 42, 44, 61, 64, 82, 83]);
+    let alive1Generation = setDeathAlive(initialAliveSquares, countInLine, countOfAllSquares);
+    let correctData = extentions.createCorrectDataStructure([23, 42, 44, 61, 64, 82, 83]);
+    expect(extentions.compareData(correctData, alive1Generation)).toEqual(true);
 });
 
-test('data from left top corner', () => {
-    let data = code.getNeighbours(0, 20, 400);
-    let correctData = [1, 20, 21, 19, 39, 380, 381, 399];
-    expect(data).toEqual(expect.arrayContaining(correctData));
+test('5 R-pentamino', () => {
+    let initialAliveSquares = extentions.createCorrectDataStructure([22, 23, 42, 41, 62]);
+    let alive1Generation = setDeathAlive(initialAliveSquares, countInLine, countOfAllSquares);
+    let correctData = extentions.createCorrectDataStructure([21, 22, 23, 41, 61, 62]);
+    expect(extentions.compareData(correctData, alive1Generation)).toEqual(true);
 });
 
-test('data from left bottom corner', () => {
-    let data = code.getNeighbours(380, 20, 400);
-    let correctData = [360, 381, 361, 399, 379, 0, 1, 19];
-    expect(data).toEqual(expect.arrayContaining(correctData));
+test('7 acorn', () => {
+    let initialAliveSquares = extentions.createCorrectDataStructure([23, 45, 62, 63, 66, 67, 68]);
+    let alive1Generation = setDeathAlive(initialAliveSquares, countInLine, countOfAllSquares);
+    let correctData = extentions.createCorrectDataStructure([42, 43, 44, 66, 67]);
+    expect(extentions.compareData(correctData, alive1Generation)).toEqual(true);
 });
 
-test('data from right top corner', () => {
-    let data = code.getNeighbours(19, 20, 400);
-    let correctData = [18, 38, 39, 0, 20, 398, 399, 380];
-    expect(data).toEqual(expect.arrayContaining(correctData));
+test('5 glider', () => {
+    let initialAliveSquares = extentions.createCorrectDataStructure([22, 43, 44, 63, 62]);
+    let alive1Generation = setDeathAlive(initialAliveSquares, countInLine, countOfAllSquares);
+    let correctData = extentions.createCorrectDataStructure([23, 44, 64, 62, 63]);
+    expect(extentions.compareData(correctData, alive1Generation)).toEqual(true);
 });
-
-test('data from right bottom corner', () => {
-    let data = code.getNeighbours(399, 20, 400);
-    let correctData = [378, 379, 398, 18, 19, 360, 380, 0];
-    expect(data).toEqual(expect.arrayContaining(correctData));
-});
-
