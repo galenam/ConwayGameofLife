@@ -4,7 +4,6 @@ const extentions = require('./testExtensions');
 const countInLine = 20;
 const countOfAllSquares = 400;
 
-// todo : составить список тестов для ситуация клетка жива - умерла
 test('3 triangle', () => {
     let initialAliveSquares = extentions.createCorrectDataStructure([0, 21, 40]);
     let alive1Generation = setDeathAlive(initialAliveSquares, countInLine, countOfAllSquares);

@@ -4,8 +4,6 @@ function setDeathAlive(squaresAlive, countInLine, countOfAllSquares) {
 
     let squares = new Map(squaresAlive);
     let resultMap = new Map();
-    // todo : сказать, будут ли клетки живыми
-    // todo : сказать, будут ли мертвые оживать
     for (const value of squares.keys()) {
         let squaresInner = new Map(squares);
         squaresInner.delete(value);

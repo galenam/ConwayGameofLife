@@ -2,8 +2,9 @@ import React from 'react';
 import Square from './square';
 import './Board.css';
 import setDeathAlive from './setDeathAlive';
-
+// todo: end of game : history + repeat itsealf on previous step
 class Board extends React.Component {
+
     constructor(props) {
         super(props);
 
@@ -11,6 +12,8 @@ class Board extends React.Component {
             squaresAll: (new Array(400)).fill(false),
             squaresAlive: new Map(),
             countInLine: 20,
+            timerId: null,
+            disabled: 'disabled'
         };
     }
 
@@ -29,37 +32,72 @@ class Board extends React.Component {
         else if (!squares[i] && foundAliveSquare) {
             squaresAlive.delete(i);
         }
+        const disabled = squaresAlive !== null && squaresAlive.size > 0 ? '' : 'disabled';
         this.setState({
             squaresAll: squares,
             squaresAlive: squaresAlive,
+            disabled: disabled
         });
     }
 
-    // todo : реализовать функцию
-    getSquaresAllFromDifference(difference, squaresAll) {
+    getSquaresAllFromDifference(aliveSquares) {
         var newSquaresAll = (new Array(400)).fill(false);
-        for (let value of difference.keys()) {
+        for (const value of aliveSquares.keys()) {
             newSquaresAll[value] = true;
         }
         return newSquaresAll;
     }
 
-    // todo : реализовать функцию
-    getSquaresAlliveFromDifference(difference, squaresAlive) {
-        return new Map(squaresAlive);
+    startGame() {
+        const timerId = setInterval(() => this.nextStep(), 1000);
+        this.setState({
+            timerId: timerId,
+        });
     }
 
-    startGame() {
-        let squaresAll = this.state.squaresAll.slice();
-        let squaresAlive = new Map(this.state.squaresAlive);
-        let difference = setDeathAlive(squaresAlive, this.state.countInLine, squaresAll.length);
-        let squaresAllNew = this.getSquaresAllFromDifference(difference, squaresAll);
-        // todo : таймер
-        let squaresAliveNew = difference;//this.getSquaresAlliveFromDifference(difference, squaresAlive);
+    stopGame() {
+        if (this.state.timerId !== null) {
+            clearInterval(this.state.timerId);
+            this.setState({
+                timerId: null,
+            });
+        }
+    }
+
+    nextStep() {
+        let newAliveSquares = setDeathAlive(this.state.squaresAlive, this.state.countInLine, this.state.squaresAll.length);
+        let newAllSquares = this.getSquaresAllFromDifference(newAliveSquares);
+
+        this.checkEndOfGame(newAliveSquares);
+
         this.setState({
-            squaresAll: squaresAllNew,
-            squaresAlive: squaresAliveNew,
+            squaresAll: newAllSquares,
+            squaresAlive: newAliveSquares,
         });
+    }
+
+    checkEndOfGame(squaresAlive) {
+        if (squaresAlive === null || squaresAlive.size === 0) {
+            clearInterval(this.state.timerId);
+            this.setState({
+                disabled: 'disabled',
+                timerId: null,
+            });
+        }
+    }
+
+    getButtonStartStopText() {
+        if (this.state.timerId === null) {
+            return 'Start';
+        }
+        return 'Stop';
+    }
+
+    getActionButtonStartStop() {
+        if (this.state.timerId === null) {
+            return this.startGame();
+        }
+        return this.stopGame();
     }
 
     render() {
@@ -69,7 +107,8 @@ class Board extends React.Component {
         return <div>
             <div className="header">
                 <div>Click on initial squares and click 'Start'button</div>
-                <div><button onClick={() => this.startGame()}>Start</button></div>
+                <div><button disabled={this.state.disabled} onClick={() => this.getActionButtonStartStop()}>{this.getButtonStartStopText()}</button>
+                    <button disabled={this.state.disabled} onClick={() => this.nextStep()}>Next step</button></div>
             </div><div className='board' style={style}>{this.state.squaresAll.map((value, i) => { return this.renderSquare(i) })}
             </div>
         </div>
