@@ -2,7 +2,7 @@ import React from 'react';
 import Square from './square';
 import './Board.css';
 import setDeathAlive from './setDeathAlive';
-// todo: end of game : history + repeat itsealf on previous step
+// todo: end of game : сделать текстовое сообщение о том, что игра окончена и можно начать заново
 class Board extends React.Component {
 
     constructor(props) {
@@ -13,7 +13,9 @@ class Board extends React.Component {
             squaresAlive: new Map(),
             countInLine: 20,
             timerId: null,
-            disabled: 'disabled'
+            disabled: 'disabled',
+            history: new Array(),
+            isDefaultStateAdded: false,
         };
     }
 
@@ -65,25 +67,92 @@ class Board extends React.Component {
     }
 
     nextStep() {
+        let history = this.state.history.slice();
+        let isDefaultStateAdded = this.state.isDefaultStateAdded;
+        if (!isDefaultStateAdded) {
+            history.push(this.state.squaresAlive);
+            isDefaultStateAdded = true;
+        }
         let newAliveSquares = setDeathAlive(this.state.squaresAlive, this.state.countInLine, this.state.squaresAll.length);
-        let newAllSquares = this.getSquaresAllFromDifference(newAliveSquares);
 
-        this.checkEndOfGame(newAliveSquares);
+        const isGameOver = this.checkEndOfGame(newAliveSquares, history);
+        let disabled = this.state.disabled;
+        if (!isGameOver) {
+            history.push(newAliveSquares);
+        }
+        else {
+            history = new Array();
+            disabled = newAliveSquares === null || newAliveSquares.size === 0 ? 'disabled' : '';
+            isDefaultStateAdded = false;
+            newAliveSquares = new Map(this.state.squaresAlive);
+        }
+
+        let newAllSquares = this.getSquaresAllFromDifference(newAliveSquares);
 
         this.setState({
             squaresAll: newAllSquares,
             squaresAlive: newAliveSquares,
+            history: history,
+            disabled: disabled,
+            isDefaultStateAdded: isDefaultStateAdded,
         });
+        if (isGameOver) {
+            this.endGame();
+        }
     }
 
-    checkEndOfGame(squaresAlive) {
+    checkEndOfGame(squaresAlive, history) {
         if (squaresAlive === null || squaresAlive.size === 0) {
-            clearInterval(this.state.timerId);
-            this.setState({
-                disabled: 'disabled',
-                timerId: null,
-            });
+            return true;
         }
+        for (let i = 0; i < history.length; i++) {
+            if (this.compareWithPreviousConfiguration(history[i], squaresAlive) === true) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    compareWithPreviousConfiguration(sourceMap, destinationMap) {
+        if (sourceMap.size !== destinationMap.size) {
+            return false;
+        }
+        // get 0-element from source
+        let source0Element;
+        for (let value of sourceMap.keys()) {
+            source0Element = value;
+            break;
+        }
+        // get 0-element from destination
+        let destination0Element;
+        for (let value of destinationMap.keys()) {
+            destination0Element = value;
+            break;
+        }
+        let difference = destination0Element - source0Element;
+        for (let value of sourceMap.keys()) {
+            if (!destinationMap.has(value) && !destinationMap.has(value + difference)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    createArrayFromKeysMap(map) {
+        let array = new Array();
+        for (const value of map.keys()) {
+            array.push(value);
+        }
+        return array;
+    }
+
+    endGame() {
+        clearInterval(this.state.timerId);
+        this.setState({
+            //        disabled: 'disabled',
+            timerId: null,
+            //        history: new Array(),
+        });
     }
 
     getButtonStartStopText() {

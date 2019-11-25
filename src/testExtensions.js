@@ -7,6 +7,9 @@ function createCorrectDataStructure(arr) {
 }
 
 function compareData(initialData, resultData) {
+    if (initialData.size !== resultData.size) {
+        return false;
+    }
     for (let value of initialData.keys()) {
         if (!resultData.has(value)) {
             return false;
