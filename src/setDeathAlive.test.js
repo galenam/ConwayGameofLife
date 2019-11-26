@@ -51,11 +51,11 @@ test('5 R-pentamino', () => {
     let correctData = extentions.createCorrectDataStructure([21, 22, 23, 41, 61, 62]);
     expect(extentions.compareData(correctData, alive1Generation)).toEqual(true);
 });
-
+// todo : исправить тест
 test('7 acorn', () => {
     let initialAliveSquares = extentions.createCorrectDataStructure([23, 45, 62, 63, 66, 67, 68]);
     let alive1Generation = setDeathAlive(initialAliveSquares, countInLine, countOfAllSquares);
-    let correctData = extentions.createCorrectDataStructure([42, 43, 44, 66, 67]);
+    let correctData = extentions.createCorrectDataStructure([42, 43, 44, 66, 67, 46, 47, 87]);
     expect(extentions.compareData(correctData, alive1Generation)).toEqual(true);
 });
 

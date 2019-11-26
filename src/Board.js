@@ -2,8 +2,14 @@ import React from 'react';
 import Square from './square';
 import './Board.css';
 import setDeathAlive from './setDeathAlive';
-// todo: end of game : сделать текстовое сообщение о том, что игра окончена и можно начать заново
+
 class Board extends React.Component {
+
+    greetingMessage = 'Click on initial squares and click \'Start\'button';
+    endOfGameEmptyMessage = 'Game over. All cells are dead. You can select new configuration and play once more. Enjoy!';
+    endOfGameRepeatConfigarationMessage = 'Game over. Game repeat configuraion from one of previous steps. You can click \'Start\' button or add more cells and  click \'Start\' button';
+
+    enumCheckEndOfGame = { gameContinue: 0, gameOverAllDead: 1, gameOverRepeatPrevious: 3 };
 
     constructor(props) {
         super(props);
@@ -16,6 +22,7 @@ class Board extends React.Component {
             disabled: 'disabled',
             history: new Array(),
             isDefaultStateAdded: false,
+            messageDescription: this.greetingMessage,
         };
     }
 
@@ -77,14 +84,22 @@ class Board extends React.Component {
 
         const isGameOver = this.checkEndOfGame(newAliveSquares, history);
         let disabled = this.state.disabled;
-        if (!isGameOver) {
+        let messageDescription = this.state.messageDescription;
+
+        if (isGameOver === this.enumCheckEndOfGame.gameContinue) {
             history.push(newAliveSquares);
         }
         else {
             history = new Array();
             disabled = newAliveSquares === null || newAliveSquares.size === 0 ? 'disabled' : '';
             isDefaultStateAdded = false;
-            newAliveSquares = new Map(this.state.squaresAlive);
+            if (isGameOver === this.enumCheckEndOfGame.gameOverAllDead) {
+                messageDescription = this.endOfGameEmptyMessage;
+            }
+            else if (isGameOver === this.enumCheckEndOfGame.gameOverRepeatPrevious) {
+                messageDescription = this.endOfGameRepeatConfigarationMessage;
+                newAliveSquares = new Map(this.state.squaresAlive);
+            }
         }
 
         let newAllSquares = this.getSquaresAllFromDifference(newAliveSquares);
@@ -95,6 +110,7 @@ class Board extends React.Component {
             history: history,
             disabled: disabled,
             isDefaultStateAdded: isDefaultStateAdded,
+            messageDescription: messageDescription,
         });
         if (isGameOver) {
             this.endGame();
@@ -103,14 +119,14 @@ class Board extends React.Component {
 
     checkEndOfGame(squaresAlive, history) {
         if (squaresAlive === null || squaresAlive.size === 0) {
-            return true;
+            return this.enumCheckEndOfGame.gameOverAllDead;
         }
         for (let i = 0; i < history.length; i++) {
             if (this.compareWithPreviousConfiguration(history[i], squaresAlive) === true) {
-                return true;
+                return this.enumCheckEndOfGame.gameOverRepeatPrevious;
             }
         }
-        return false;
+        return this.enumCheckEndOfGame.gameContinue;
     }
 
     compareWithPreviousConfiguration(sourceMap, destinationMap) {
@@ -175,7 +191,7 @@ class Board extends React.Component {
         };
         return <div>
             <div className="header">
-                <div>Click on initial squares and click 'Start'button</div>
+                <div>{this.state.messageDescription}</div>
                 <div><button disabled={this.state.disabled} onClick={() => this.getActionButtonStartStop()}>{this.getButtonStartStopText()}</button>
                     <button disabled={this.state.disabled} onClick={() => this.nextStep()}>Next step</button></div>
             </div><div className='board' style={style}>{this.state.squaresAll.map((value, i) => { return this.renderSquare(i) })}
